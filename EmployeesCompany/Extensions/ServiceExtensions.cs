@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Contracts;
+using LoggerService;
+using Microsoft.Extensions.Hosting;
 using Microsoft.VisualBasic;
 using System;
 using static System.Net.Mime.MediaTypeNames;
@@ -30,6 +32,10 @@ namespace EmployeesCompany.Extensions
              services.Configure<IISOptions>(options =>
              {
              });
+
+
+        public static void ConfigureLoggerService(this IServiceCollection services) =>
+        services.AddSingleton<ILoggerManager, LoggerManager>();
 
     }
 }
