@@ -2,8 +2,12 @@
 using LoggerService;
 using Microsoft.Extensions.Hosting;
 using Microsoft.VisualBasic;
+using Repository;
 using System;
 using static System.Net.Mime.MediaTypeNames;
+using Service;
+using Service.Contracts;
+using Microsoft.EntityFrameworkCore;
 
 namespace EmployeesCompany.Extensions
 {
@@ -36,6 +40,18 @@ namespace EmployeesCompany.Extensions
 
         public static void ConfigureLoggerService(this IServiceCollection services) =>
         services.AddSingleton<ILoggerManager, LoggerManager>();
+
+        public static void ConfigureRepositoryManager(this IServiceCollection services) =>
+        services.AddScoped<IRepositoryManager, RepositoryManager>();
+
+        public static void ConfigureServiceManager(this IServiceCollection services) =>
+        services.AddScoped<IServiceManager, ServiceManager>();
+
+
+        public static void ConfigureSqlContext(this IServiceCollection services,
+        IConfiguration configuration) =>
+        services.AddDbContext<RepositoryContext>(opts =>
+        opts.UseSqlServer(configuration.GetConnectionString("sqlConnection")));
 
     }
 }
