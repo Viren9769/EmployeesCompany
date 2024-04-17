@@ -10,9 +10,9 @@ namespace CompanyEmployees.Presentation.Controllers
 {
     [Route("api/companies/{companyId}/employees")]
     [ApiController]
-    public class EmployeesController: ControllerBase
+    public class EmployeesController : ControllerBase
     {
-       private readonly IServiceManager _serviceManager;
+        private readonly IServiceManager _serviceManager;
         public EmployeesController(IServiceManager service) => _serviceManager = service;
 
         [HttpGet]
@@ -22,6 +22,12 @@ namespace CompanyEmployees.Presentation.Controllers
             false);
             return Ok(employees);
         }
-
+        [HttpGet("{id:guid}")]
+        public IActionResult GetEmployeeForCompany(Guid companyId, Guid id)
+        {
+            var employee = _serviceManager.EmployeeService.GetEmployee(companyId, id,
+            trackChanges: false);
+            return Ok(employee);
+        }
     }
 }
