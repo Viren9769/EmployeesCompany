@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace Contracts
 {
+    //how to create a generic interface in C#
+    // the code below all the basic operation  related to an entity are declared in the interface.
     public interface IRepositoryBase<T>
     {
         IQueryable<T> FindAll(bool trackChanges);
