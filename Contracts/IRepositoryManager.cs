@@ -12,5 +12,6 @@ namespace Contracts
         IEmployeeRepository Employee { get; }
 
         void save();
+        void Save();
     }
 }

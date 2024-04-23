@@ -5,6 +5,7 @@ namespace EmployeesCompany.ContextFactory
 {
     public class RepositoryContextFactory : IDesignTimeDbContextFactory<RepositoryContext>
     {
+        //
         public RepositoryContext CreateDbContext(string[] args)
         {
             var configuration = new ConfigurationBuilder()
