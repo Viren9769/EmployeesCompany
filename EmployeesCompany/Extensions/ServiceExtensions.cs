@@ -8,6 +8,8 @@ using static System.Net.Mime.MediaTypeNames;
 using Service;
 using Service.Contracts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
 
 namespace EmployeesCompany.Extensions
 {
@@ -59,6 +61,18 @@ namespace EmployeesCompany.Extensions
         public static IMvcBuilder AddCustomCSVFormatter(this IMvcBuilder builder) =>
         builder.AddMvcOptions(config => config.OutputFormatters.Add(new
         CsvOutputFormatter()));
+
+        public static void ConfigureVersioning(this IServiceCollection services)
+        {
+            services.AddApiVersioning(opt =>
+            {
+                opt.ReportApiVersions = true;                                     //  ReportApiVersions adds the API version to the response header.
+                opt.AssumeDefaultVersionWhenUnspecified = true;                 //  AssumeDefaultVersionWhenUnspecified does exactly that. It specifies the default API version if the client doesn’t send one.
+                opt.DefaultApiVersion = new ApiVersion(1, 0);                 //  DefaultApiVersion sets the default version count.
+
+                opt.ApiVersionReader = new HeaderApiVersionReader("api-version");
+            });
+        }
 
     }
 }

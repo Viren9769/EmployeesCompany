@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace CompanyEmployees.Presentation.Controllers
 {
+    [ApiVersion("1.0")]
     [Route("api/companies")]
     [ApiController]
     public class CompaniesController : ControllerBase
@@ -34,8 +35,7 @@ namespace CompanyEmployees.Presentation.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> CreateCompany([FromBody] CompanyForCreationDto
-company)
+        public async Task<IActionResult> CreateCompany([FromBody] CompanyForCreationDto company)
         {
             if (company is null)
                 return BadRequest("CompanyForCreationDto object is null");
@@ -45,7 +45,7 @@ company)
             return CreatedAtRoute("CompanyById", new { id = createdCompany.Id },
             createdCompany);
         }
-
+     
 
         [HttpGet("collection/({ids})", Name = "CompanyCollection")]
         public async Task<IActionResult> GetCompanyCollection
