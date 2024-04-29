@@ -24,6 +24,10 @@ builder.Services.ConfigureServiceManager();
 builder.Services.ConfigureSqlContext(builder.Configuration);
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.ConfigureVersioning();
+builder.Services.ConfigureResponsecaching();
+builder.Services.ConfigureHttpCacheHeaders();
+
+
 // Add services to the container.
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
@@ -41,7 +45,11 @@ builder.Services.AddScoped<ValidationFilterAttribute>();
 builder.Services.AddControllers(config => {
     config.RespectBrowserAcceptHeader = true;
     config.ReturnHttpNotAcceptable = true;
-    }).AddXmlDataContractSerializerFormatters()
+    config.CacheProfiles.Add("120SecondsDuration", new CacheProfile
+    {
+        Duration = 120
+    });
+}).AddXmlDataContractSerializerFormatters()
     .AddCustomCSVFormatter()
     .AddApplicationPart(typeof(CompanyEmployees.Presentation.AssemblyReference).Assembly);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -75,6 +83,8 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 });
 app.UseCors("CorsPolicy");
 
+app.UseResponseCaching();
+app.UseHttpCacheHeaders();
 app.UseAuthorization();
 
 app.MapControllers();
