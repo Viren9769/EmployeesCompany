@@ -11,7 +11,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Marvin.Cache.Headers;
-
+using Microsoft.AspNetCore.Identity;
+using Entities.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace EmployeesCompany.Extensions
 {
@@ -20,9 +24,9 @@ namespace EmployeesCompany.Extensions
 
         //  we are going to da is configure CORS in our application 
         // We are using basic CORS policy settings because allowing any origin, 
-       // method, and header is okay for now.But we should be more
-       // restrictive with those settings in the production environment.More
-       // precisely, as restrictive as possible.
+        // method, and header is okay for now.But we should be more
+        // restrictive with those settings in the production environment.More
+        // precisely, as restrictive as possible.
         public static void ConfigureCors(this IServiceCollection services) =>
         services.AddCors(options =>
         {
@@ -49,7 +53,7 @@ namespace EmployeesCompany.Extensions
         services.AddScoped<IRepositoryManager, RepositoryManager>();
 
 
-        
+
 
         public static void ConfigureServiceManager(this IServiceCollection services) =>
         services.AddScoped<IServiceManager, ServiceManager>();
@@ -84,10 +88,51 @@ namespace EmployeesCompany.Extensions
                  expirationOpt.MaxAge = 65;
                  expirationOpt.CacheLocation = CacheLocation.Private;
              },
- (validationOpt) =>
- {
-     validationOpt.MustRevalidate = true;
- });
+               (validationOpt) =>
+               {
+                 validationOpt.MustRevalidate = true;
+               });
+
+        public static void ConfigureIdentity(this IServiceCollection services)
+        {
+            var builder = services.AddIdentity<User, IdentityRole>(o =>
+            {
+                o.Password.RequireDigit = true;
+                o.Password.RequireLowercase = false;
+                o.Password.RequireUppercase = false;
+                o.Password.RequireNonAlphanumeric = false;
+                o.Password.RequiredLength = 10;
+                o.User.RequireUniqueEmail = true;
+            })
+                .AddEntityFrameworkStores<RepositoryContext>()
+                .AddDefaultTokenProviders();
+                ;
+        }
+        public static void ConfigureJWT(this IServiceCollection services, IConfiguration
+        configuration)
+        {
+            var jwtSettings = configuration.GetSection("JwtSettings");
+            var secretKey = Environment.GetEnvironmentVariable("SECRET");
+            services.AddAuthentication(opt =>
+            {
+                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtSettings["validIssuer"],
+                    ValidAudience = jwtSettings["validAudience"],
+                    IssuerSigningKey = new
+    SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+                };
+            });
+        }
 
 
 

@@ -26,6 +26,9 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.ConfigureVersioning();
 builder.Services.ConfigureResponsecaching();
 builder.Services.ConfigureHttpCacheHeaders();
+builder.Services.AddAuthentication();
+builder.Services.ConfigureIdentity();
+builder.Services.ConfigureJWT(builder.Configuration);
 
 
 // Add services to the container.
@@ -85,6 +88,7 @@ app.UseCors("CorsPolicy");
 
 app.UseResponseCaching();
 app.UseHttpCacheHeaders();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
