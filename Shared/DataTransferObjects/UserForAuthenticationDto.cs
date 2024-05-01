@@ -15,4 +15,6 @@ namespace Shared.DataTransferObjects
         public string? Password { get; init; }
     }
 
+    public record TokenDto(string AccessToken, string RefreshToken);
+
 }
